@@ -61,6 +61,9 @@ JCalendar::JCalendar(QWidget *i_parent) :
     for( int i=0; i<42; ++i )
         connect( m_b[ i ], SIGNAL(clicked(bool)), this, SLOT(bClicked(bool)));
 
+    m_currentDate.Year = 0;
+    m_currentDate.Month = 0;
+    m_currentDate.Day = 0;
     setDate( today() );
     m_ui->TextDate->selectAll();
     m_ui->TextDate->setFocus();
@@ -94,13 +97,22 @@ bool JCalendar::isLeap(int i_year)
 
 bool JCalendar::isValid(Date &i_date)
 {
-    if( i_date.Year < 1244 || i_date.Year > 1472 || i_date.Month < 1 || i_date.Month > 12 || i_date.Day < 1 )
+    if( i_date.Year < 1244 || i_date.Year > 1472 || i_date.Month < 1 || i_date.Month > 12 || i_date.Day < 1 || i_date.Day > 31 )
         return false;
-    if( i_date.Day > 30 )
+
+    if( i_date.Month > 6 && i_date.Day > 30 )
         return false;
-    if( !isLeap( i_date.Year ) && i_date.Day > 29 )
+
+    if( i_date.Month == 12 && !isLeap( i_date.Year ) && i_date.Day > 29 )
         return false;
+
     return true;
+}
+
+bool JCalendar::isValid(const QString &i_date)
+{
+    Date date = Date::fromString( i_date );
+    return isValid( date );
 }
 
 int idiv( int a, int b )
@@ -484,6 +496,7 @@ void JCalendar::reDecorate()
     {
         m_b[ i ]->setText( toPersianNumber( day ) );
         m_b[ i ]->setEnabled( false );
+        m_b[ i ]->setFlat( true );
         m_day[ i ] = day++;
     }
 
@@ -492,6 +505,7 @@ void JCalendar::reDecorate()
     {
         m_b[ i ]->setText( toPersianNumber( day ) );
         m_b[ i ]->setEnabled( true );
+        m_b[ i ]->setFlat( false );
         if( day == m_currentDate.Day )
         {
             m_b[ i ]->blockSignals( true );
@@ -507,6 +521,7 @@ void JCalendar::reDecorate()
     {
         m_b[ i ]->setText( toPersianNumber( day ) );
         m_b[ i ]->setEnabled( false );
+        m_b[ i ]->setFlat( true );
         m_day[ i ] = day++;
     }
 

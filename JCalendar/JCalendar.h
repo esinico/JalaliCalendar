@@ -32,6 +32,7 @@ public:
 
     static bool isLeap(int i_year);//year is in Jalali system in range:[1244,1472]
     static bool isValid(Date &i_date );//year is in Jalali system in range:[1244,1472]
+    static bool isValid(const QString &i_date);
     static Date toJalali( Date &i_date );
     static Date toGregorian( Date &i_date );
     static int getDayCount( int i_year );//Jalali
